@@ -1,0 +1,6 @@
+{
+  "name": "Skillwrap",
+  "description": "A professional freelancing platform for clients and freelancers to connect, collaborate, and swap tasks.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

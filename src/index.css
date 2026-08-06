@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+html {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.dark {
+  background-color: #0a0f1d;
+  color: #f1f5f9;
+}
+
+body {
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Custom Premium Scrollbar Design matching the Skillwrap Crimson Theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2); /* slate-400 equivalent */
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(30, 41, 59, 0.4); /* slate-800 equivalent */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e10032; /* Skillwrap Crimson Hover state */
+  box-shadow: 0 0 10px rgba(225, 0, 50, 0.4);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #ff4d6d; /* Skillwrap soft pinkish-red darkmode hover */
+  box-shadow: 0 0 10px rgba(255, 77, 109, 0.4);
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+
+
