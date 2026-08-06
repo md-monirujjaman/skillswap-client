@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "@/lib/api";
+import api, { API_BASE_URL } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { ArrowRight, User as UserIcon, Code2, Sparkles, Eye, EyeOff } from "lucide-react";
 import Logo from "../components/Logo";
@@ -77,18 +77,8 @@ export default function Register() {
     }
   };
 
-  const handleGoogleRegister = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      await api.post("/api/auth/google");
-      await checkAuth(); 
-      navigate("/"); 
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Google registration failed");
-    } finally {
-      setLoading(false);
-    }
+  const handleGoogleRegister = () => {
+    window.location.href = `${API_BASE_URL}/api/auth/sign-in/social?provider=google`;
   };
 
   return (

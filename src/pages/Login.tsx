@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "@/lib/api";
+import api, { API_BASE_URL } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import Logo from "../components/Logo";
@@ -45,19 +45,8 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      await api.post("/api/auth/google");
-      await checkAuth(); // Refresh user state
-      navigate("/"); // Google users are Client by default, so go to Home
-    } catch (err: any) {
-      const msg = err.response?.data?.error || (err.response?.status === 500 ? "Server database error. Please retry in a few seconds." : "Google login failed");
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
+  const handleGoogleLogin = () => {
+    window.location.href = `${API_BASE_URL}/api/auth/sign-in/social?provider=google`;
   };
 
   return (
