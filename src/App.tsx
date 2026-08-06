@@ -18,6 +18,7 @@ import DummyCheckout from "./pages/DummyCheckout";
 import ClientDashboard from "./pages/dashboards/ClientDashboard";
 import FreelancerDashboard from "./pages/dashboards/FreelancerDashboard";
 import AdminDashboard from "./pages/dashboards/AdminDashboard";
+import DashboardRedirect from "./pages/dashboards/DashboardRedirect";
 
 function AppContent() {
   const location = useLocation();
@@ -58,6 +59,9 @@ function AppContent() {
           <Route path="/payment/checkout" element={<DummyCheckout />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           
+          <Route path="/dashboard" element={<DashboardRedirect />} />
+          <Route path="/dashboard/*" element={<DashboardRedirect />} />
+
           <Route path="/dashboard/client/*" element={
             <ProtectedRoute allowedRoles={['Client']}><ClientDashboard /></ProtectedRoute>
           } />
