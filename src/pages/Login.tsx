@@ -45,8 +45,21 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${API_BASE_URL}/api/auth/sign-in/social?provider=google`;
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const res = await api.post("/api/auth/sign-in/social", { provider: "google" });
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        setError("Failed to initialize Google login");
+        setLoading(false);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.response?.data?.error || "Google login failed");
+      setLoading(false);
+    }
   };
 
   return (
