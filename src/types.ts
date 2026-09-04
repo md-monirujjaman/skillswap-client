@@ -1,18 +1,19 @@
 export type Role = 'Client' | 'Freelancer' | 'Admin';
 
 export interface User {
-  _id: string;
+  _id?: string;
+  id?: string;
   name: string;
   email: string;
-  image: string;
+  image?: string;
   role: Role;
-  skills: string[];
-  bio: string;
+  skills?: string[];
+  bio?: string;
   hourlyRate?: number;
-  isBlocked: boolean;
+  isBlocked?: boolean;
   isVerified?: boolean;
   bookmarkedTasks?: string[];
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface Task {

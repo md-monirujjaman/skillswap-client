@@ -59,9 +59,6 @@ function AppContent() {
           <Route path="/payment/checkout" element={<DummyCheckout />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           
-          <Route path="/dashboard" element={<DashboardRedirect />} />
-          <Route path="/dashboard/*" element={<DashboardRedirect />} />
-
           <Route path="/dashboard/client/*" element={
             <ProtectedRoute allowedRoles={['Client']}><ClientDashboard /></ProtectedRoute>
           } />
@@ -71,6 +68,7 @@ function AppContent() {
           <Route path="/dashboard/admin/*" element={
             <ProtectedRoute allowedRoles={['Admin']}><AdminDashboard /></ProtectedRoute>
           } />
+          <Route path="/dashboard" element={<DashboardRedirect />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

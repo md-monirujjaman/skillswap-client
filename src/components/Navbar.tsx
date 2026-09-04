@@ -99,7 +99,7 @@ export default function Navbar() {
               <div className="flex items-center gap-3">
                 <Link to={`/dashboard/${user.role.toLowerCase()}`} className="text-neutral-600 hover:text-black dark:text-neutral-300 dark:hover:text-white px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all hover:bg-slate-100/50 dark:hover:bg-slate-900/40 border border-transparent hover:border-slate-200/10">Dashboard</Link>
                 {user.role === 'Freelancer' && (
-                  <Link to={`/freelancers/${user.id}`} className="text-neutral-600 hover:text-black dark:text-neutral-300 dark:hover:text-white px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all hover:bg-slate-100/50 dark:hover:bg-slate-900/40 border border-transparent hover:border-slate-200/10">Profile</Link>
+                  <Link to={`/freelancers/${user._id || user.id}`} className="text-neutral-600 hover:text-black dark:text-neutral-300 dark:hover:text-white px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all hover:bg-slate-100/50 dark:hover:bg-slate-900/40 border border-transparent hover:border-slate-200/10">Profile</Link>
                 )}
                 <button 
                   onClick={handleLogout} 
@@ -141,7 +141,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link to={`/dashboard/${user.role.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Dashboard</Link>
-                {user.role === 'Freelancer' && <Link to={`/freelancers/${user.id}`} onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Profile</Link>}
+                {user.role === 'Freelancer' && <Link to={`/freelancers/${user._id || user.id}`} onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Profile</Link>}
                 <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full mt-2 bg-black text-white dark:bg-white dark:text-black hover:opacity-90 px-4 py-2 rounded-lg text-base font-medium transition">Logout</button>
               </>
             ) : (

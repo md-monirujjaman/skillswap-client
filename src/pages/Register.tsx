@@ -21,13 +21,13 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user, checkAuth } = useAuth();
+  const { user, checkAuth, setUser } = useAuth();
 
   React.useEffect(() => {
     if (user) {
       if (user.role === 'Admin') navigate("/dashboard/admin");
-      else if (user.role === 'Client') navigate("/");
-      else navigate("/dashboard/freelancer");
+      else if (user.role === 'Freelancer') navigate("/dashboard/freelancer");
+      else navigate("/dashboard/client");
     }
   }, [user, navigate]);
 
@@ -51,7 +51,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await api.post("/api/auth/register", {
+      const res = await api.post("/api/auth/register", {
         name,
         email,
         password,
@@ -62,16 +62,27 @@ export default function Register() {
         hourlyRate: hourlyRate ? Number(hourlyRate) : 50,
       });
 
-      await checkAuth(); // Refresh user state
-      
+      const registeredUser = res.data?.user;
+      if (registeredUser) {
+        setUser(registeredUser);
+      }
+
+      await checkAuth();
+
       if (role === 'Client') {
-        navigate("/");
-      } else {
+        navigate("/dashboard/client");
+      } else if (role === 'Freelancer') {
         navigate("/dashboard/freelancer");
+      } else {
+        navigate("/dashboard/admin");
       }
 
     } catch (err: any) {
-      setError(err.response?.data?.error || "Registration failed");
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Registration failed. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-// Single API configuration file storing the live backend base URL
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.NEXT_PUBLIC_API_URL ||
-  'https://skillswap-server-monirujjaman.vercel.app';
+const isBrowser = typeof window !== 'undefined';
+const isLocalhost = isBrowser && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+// On localhost, use relative '' so Vite dev server proxies /api and cookies work properly
+export const API_BASE_URL = isLocalhost
+  ? ''
+  : (import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || 'https://skillswap-server-monirujjaman.vercel.app');
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

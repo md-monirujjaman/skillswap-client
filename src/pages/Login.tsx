@@ -12,13 +12,13 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user, checkAuth } = useAuth();
+  const { user, checkAuth, setUser } = useAuth();
 
   React.useEffect(() => {
     if (user) {
       if (user.role === 'Admin') navigate("/dashboard/admin");
-      else if (user.role === 'Client') navigate("/");
-      else navigate("/dashboard/freelancer");
+      else if (user.role === 'Freelancer') navigate("/dashboard/freelancer");
+      else navigate("/dashboard/client");
     }
   }, [user, navigate]);
 
@@ -28,17 +28,28 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await api.post("/api/auth/login", { email, password });
-      await checkAuth(); // Refresh user state
+      const res = await api.post("/api/auth/login", { email, password });
+      const loggedUser = res.data?.user;
       
-      const res = await api.get("/api/auth/me");
-      const r = res.data.user.role;
-      if (r === 'Admin') navigate("/dashboard/admin");
-      else if (r === 'Client') navigate("/");
-      else navigate("/dashboard/freelancer");
+      if (loggedUser) {
+        setUser(loggedUser);
+      }
+      
+      const verified = await checkAuth();
+      const finalUser = verified || loggedUser;
+      const role = finalUser?.role;
+
+      if (role === 'Admin') navigate("/dashboard/admin");
+      else if (role === 'Freelancer') navigate("/dashboard/freelancer");
+      else navigate("/dashboard/client");
 
     } catch (err: any) {
-      const msg = err.response?.data?.error || (err.response?.status === 500 ? "Server database error. Please retry in a few seconds." : "Login failed");
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        (err.response?.status === 500
+          ? "Server error. Please retry in a few seconds."
+          : "Login failed. Please check your email and password.");
       setError(msg);
     } finally {
       setLoading(false);
