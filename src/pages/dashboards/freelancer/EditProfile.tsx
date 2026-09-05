@@ -70,7 +70,7 @@ export default function EditProfile() {
           <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700 dark:text-neutral-300">Profile Photo URL</label>
           <div className="flex gap-4 items-center">
             {image && (
-               <img src={image} alt="Preview" className="w-12 h-12 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 flex-shrink-0" onError={(e) => e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${name}`} />
+               <img src={image} alt="Preview" className="w-12 h-12 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 flex-shrink-0" onError={() => setImage("")} />
             )}
             <input type="url" value={image} onChange={e=>setImage(e.target.value)} placeholder="https://example.com/photo.jpg" className="w-full px-5 py-3.5 border border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-black/20 text-slate-900 dark:text-white rounded-2xl focus:border-[#e10032] dark:focus:border-[#ff4d6d] focus:ring-2 focus:ring-[#e10032]/10 outline-none transition-all duration-300 font-medium" />
           </div>

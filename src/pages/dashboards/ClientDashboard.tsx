@@ -5,12 +5,14 @@ import DashboardLayout from "./DashboardLayout";
 import PostTask from "./client/PostTask";
 import MyTasks from "./client/MyTasks";
 import ManageProposals from "./client/ManageProposals";
+import ClientProposals from "./client/ClientProposals";
 
 export default function ClientDashboard() {
   const links = [
     { path: "/dashboard/client", label: "Overview" },
     { path: "/dashboard/client/post", label: "Post a Task" },
-    { path: "/dashboard/client/tasks", label: "My Tasks" }
+    { path: "/dashboard/client/tasks", label: "My Tasks" },
+    { path: "/dashboard/client/proposals", label: "Proposals" }
   ];
 
   return (
@@ -19,6 +21,7 @@ export default function ClientDashboard() {
         <Route path="/" element={<ClientOverview />} />
         <Route path="/post" element={<PostTask />} />
         <Route path="/tasks" element={<MyTasks />} />
+        <Route path="/proposals" element={<ClientProposals />} />
         <Route path="/tasks/:taskId/proposals" element={<ManageProposals />} />
       </Routes>
     </DashboardLayout>

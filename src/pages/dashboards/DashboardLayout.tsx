@@ -11,7 +11,7 @@ export default function DashboardLayout({ children, roleLinks }: { children: Rea
   if (!user) return null;
 
   return (
-    <div className="flex flex-col md:flex-row gap-0 bg-white/70 dark:bg-[#0b101d]/60 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-3xl shadow-[0_15px_45px_rgba(0,0,0,0.02)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.35)] overflow-hidden min-h-[650px] relative">
+    <div className="flex w-full min-w-0 flex-col gap-0 overflow-hidden rounded-3xl border border-slate-200/60 bg-white/70 shadow-[0_15px_45px_rgba(0,0,0,0.02)] backdrop-blur-xl dark:border-slate-800/60 dark:bg-[#0b101d]/60 dark:shadow-[0_25px_60px_rgba(0,0,0,0.35)] md:flex-row md:min-h-[650px] relative">
       
       {/* Mobile Toggle Header - Ultra Premium Glassmorphic design with glowing highlights */}
       <div className="md:hidden flex items-center justify-between p-5 border-b border-slate-100/85 dark:border-slate-800/50 bg-gradient-to-r from-white/90 via-slate-50/70 to-white/95 dark:from-[#0a0f1d]/90 dark:via-[#0c1222]/80 dark:to-[#090e1a]/95 backdrop-blur-xl relative overflow-hidden">
@@ -37,7 +37,7 @@ export default function DashboardLayout({ children, roleLinks }: { children: Rea
       </div>
 
       {/* Sidebar Navigation */}
-      <aside className={`w-full md:w-64 bg-gradient-to-b from-slate-50/60 via-slate-50/25 to-transparent dark:from-[#080d19]/80 dark:via-[#070b14]/50 dark:to-transparent backdrop-blur-xl border-r border-slate-200/40 dark:border-slate-800/50 p-6 md:py-10 flex flex-col transition-all duration-350 ${mobileMenuOpen ? 'flex' : 'hidden md:flex'}`}>
+      <aside className={`w-full shrink-0 bg-gradient-to-b from-slate-50/60 via-slate-50/25 to-transparent dark:from-[#080d19]/80 dark:via-[#070b14]/50 dark:to-transparent backdrop-blur-xl border-r border-slate-200/40 dark:border-slate-800/50 p-6 md:w-64 md:py-10 flex flex-col transition-all duration-350 ${mobileMenuOpen ? 'flex' : 'hidden md:flex'}`}>
         <div className="hidden md:block mb-10 text-center md:text-left px-2 relative">
            {/* Subtle decorative theme accent background glow */}
            <div className="absolute top-0 left-0 w-24 h-24 bg-[#e10032]/8 dark:bg-[#e10032]/12 blur-2xl rounded-full pointer-events-none -z-10" />
@@ -90,7 +90,7 @@ export default function DashboardLayout({ children, roleLinks }: { children: Rea
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-6 md:p-10 overflow-y-auto">
+      <div className="min-w-0 flex-1 overflow-x-auto p-6 md:p-10">
         {children}
       </div>
 

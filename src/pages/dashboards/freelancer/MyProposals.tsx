@@ -6,10 +6,9 @@ export default function MyProposals() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/api/proposals/mine").then(res => {
-      setProposals(res.data);
-      setLoading(false);
-    }).catch(console.error);
+    api.get("/api/proposals/mine?freelancerEmail=mine").then(res => {
+      setProposals(Array.isArray(res.data) ? res.data : []);
+    }).catch(console.error).finally(() => setLoading(false));
   }, []);
 
   if (loading) return (

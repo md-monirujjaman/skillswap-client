@@ -11,6 +11,7 @@ import api from "@/lib/api";
 export default function FreelancerDashboard() {
   const links = [
     { path: "/dashboard/freelancer", label: "Earnings" },
+    { path: "/tasks", label: "Browse Tasks" },
     { path: "/dashboard/freelancer/proposals", label: "My Proposals" },
     { path: "/dashboard/freelancer/projects", label: "Active Projects" },
     { path: "/dashboard/freelancer/bookmarks", label: "Saved Jobs" },

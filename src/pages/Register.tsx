@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api, { API_BASE_URL } from "@/lib/api";
+import api from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { ArrowRight, User as UserIcon, Code2, Sparkles, Eye, EyeOff } from "lucide-react";
 import Logo from "../components/Logo";
@@ -92,7 +92,10 @@ export default function Register() {
     try {
       setLoading(true);
       setError("");
-      const res = await api.post("/api/auth/sign-in/social", { provider: "google" });
+      const res = await api.post("/api/auth/sign-in/social", {
+        provider: "google",
+        callbackURL: `${window.location.origin}/auth/callback`,
+      });
       if (res.data?.url) {
         window.location.href = res.data.url;
       } else {

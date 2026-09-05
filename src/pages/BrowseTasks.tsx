@@ -33,9 +33,11 @@ export default function BrowseTasks() {
   const fetchTasks = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/api/tasks?page=${page}&limit=9&search=${search}&category=${category}`);
-      setTasks(res.data.tasks);
-      setTotalPages(res.data.pages);
+      const res = await api.get("/api/tasks", {
+        params: { page, limit: 9, search, category },
+      });
+      setTasks(Array.isArray(res.data.tasks) ? res.data.tasks : []);
+      setTotalPages(Math.max(1, Number(res.data.pages) || 1));
     } catch (error) {
       console.error("Failed to fetch tasks", error);
     } finally {
@@ -148,9 +150,22 @@ export default function BrowseTasks() {
           >
             Previous
           </button>
-          <span className="text-sm font-bold text-slate-500 dark:text-neutral-400">
-            Page {page} of {totalPages}
-          </span>
+          <div className="flex items-center gap-2" aria-label="Task pages">
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                onClick={() => setPage(pageNumber)}
+                aria-current={pageNumber === page ? "page" : undefined}
+                className={`h-10 min-w-10 rounded-xl px-3 text-xs font-bold transition-colors ${
+                  pageNumber === page
+                    ? "bg-[#e10032] text-white shadow-md shadow-[#e10032]/20"
+                    : "border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:border-slate-800 dark:bg-[#0b101d]/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                }`}
+              >
+                {pageNumber}
+              </button>
+            ))}
+          </div>
           <button 
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}

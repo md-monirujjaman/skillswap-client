@@ -15,6 +15,7 @@ import TaskDetails from "./pages/TaskDetails";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 import DummyCheckout from "./pages/DummyCheckout";
+import AuthCallback from "./pages/AuthCallback";
 import ClientDashboard from "./pages/dashboards/ClientDashboard";
 import FreelancerDashboard from "./pages/dashboards/FreelancerDashboard";
 import AdminDashboard from "./pages/dashboards/AdminDashboard";
@@ -48,6 +49,7 @@ function AppContent() {
       <main className={`flex-grow w-full relative z-10 ${location.pathname === "/" ? "" : "max-w-7xl mx-auto p-6 md:p-8 flex flex-col"}`}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           
           <Route path="/login" element={<Navigate to="/" replace />} />
           <Route path="/register" element={<Navigate to="/" replace />} />

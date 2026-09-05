@@ -133,6 +133,7 @@ function ManageUsers() {
                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Name</th>
                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Email</th>
                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Role</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Block Status</th>
                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Verified</th>
                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">Actions</th>
               </tr>
@@ -147,6 +148,15 @@ function ManageUsers() {
                   <td className="px-6 py-5">
                     <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold uppercase tracking-wider">
                       {u.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5">
+                    <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${
+                      u.isBlocked
+                        ? 'bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400'
+                        : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400'
+                    }`}>
+                      {u.isBlocked ? 'Blocked' : 'Active'}
                     </span>
                   </td>
                   <td className="px-6 py-5">
@@ -182,7 +192,7 @@ function ManageUsers() {
               
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-neutral-400 text-sm font-medium">
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-neutral-400 text-sm font-medium">
                     No users found.
                   </td>
                 </tr>
