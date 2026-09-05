@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, Dispatch, SetStateAction } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode, Dispatch, SetStateAction } from "react";
 import api from "@/lib/api";
 import { User } from "@/types";
 
@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
   const [loading, setLoading] = useState(true);
 
-  const checkAuth = async (): Promise<User | null> => {
+  const checkAuth = useCallback(async (): Promise<User | null> => {
     try {
       const res = await api.get("/api/auth/me");
       const currentUser = res.data?.user || null;
@@ -42,9 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await api.post("/api/auth/logout");
     } catch (error) {
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       localStorage.removeItem(USER_STORAGE_KEY);
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkAuth();

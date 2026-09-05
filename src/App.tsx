@@ -24,7 +24,7 @@ import DashboardRedirect from "./pages/dashboards/DashboardRedirect";
 function AppContent() {
   const location = useLocation();
 
-  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/auth/callback";
 
   if (isAuthPage) {
     return (
@@ -34,6 +34,7 @@ function AppContent() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
         </Routes>
       </div>
     );

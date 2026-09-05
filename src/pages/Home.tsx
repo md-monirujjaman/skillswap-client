@@ -57,21 +57,42 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    api.get("/api/home")
-      .then(res => {
-        if (res?.data) {
-          setData({
-            latestTasks: Array.isArray(res.data.latestTasks) ? res.data.latestTasks : [],
-            topFreelancers: Array.isArray(res.data.topFreelancers) ? res.data.topFreelancers : [],
-            stats: res.data.stats || null,
-          });
+    const loadHome = async () => {
+      try {
+        const res = await api.get("/api/home");
+        const payload = res.data?.data || res.data || {};
+        let latestTasks = Array.isArray(payload.latestTasks)
+          ? payload.latestTasks
+          : Array.isArray(payload.tasks)
+            ? payload.tasks
+            : [];
+
+        // Keep the featured section useful when the home aggregate is unavailable
+        // or an older backend returns tasks under a different key.
+        if (latestTasks.length === 0) {
+          const tasksRes = await api.get("/api/tasks", { params: { page: 1, limit: 4 } });
+          const tasksPayload = tasksRes.data?.data || tasksRes.data || {};
+          latestTasks = Array.isArray(tasksPayload.tasks)
+            ? tasksPayload.tasks
+            : Array.isArray(tasksPayload)
+              ? tasksPayload
+              : [];
         }
-      })
-      .catch((err) => {
+
+        setData({
+          latestTasks,
+          topFreelancers: Array.isArray(payload.topFreelancers) ? payload.topFreelancers : [],
+          stats: payload.stats || null,
+        });
+      } catch (err) {
         console.warn("Home data fetch notice:", err);
         setData({ latestTasks: [], topFreelancers: [], stats: null });
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadHome();
   }, []);
 
   const containerVariants = {
@@ -84,7 +105,7 @@ export default function Home() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
   };
 
   const taskAccent = (category = "") => {
@@ -282,8 +303,8 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {data.latestTasks.map((task) => (
-              <motion.div variants={itemVariants} key={task._id}>
-                <Link to={`/tasks/${task._id}`} className="group block h-full">
+              <motion.div variants={itemVariants} key={task._id || task.id}>
+                <Link to={`/tasks/${task._id || task.id}`} className="group block h-full">
                   <div className="relative bg-white dark:bg-[#0b101d]/70 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-6 pt-7 h-full flex flex-col overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-[#e10032]/30 group-hover:shadow-[0_18px_40px_rgba(225,0,50,0.12)] dark:group-hover:shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
                     <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${taskAccent(task.category)}`} />
                     <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[#e10032]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
