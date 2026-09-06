@@ -24,9 +24,12 @@ export default function MyTasks() {
   const fetchIt = async () => {
     try {
       const res = await api.get("/api/tasks/manage");
-      setTasks(res.data);
+        const payload = res.data?.data || res.data || [];
+        const taskList = Array.isArray(payload) ? payload : payload.tasks;
+        setTasks(Array.isArray(taskList) ? taskList : []);
     } catch (e) {
       console.error(e);
+        setTasks([]);
     } finally {
       setLoading(false);
     }

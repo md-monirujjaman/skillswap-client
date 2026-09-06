@@ -7,14 +7,19 @@ import { Star, BadgeCheck } from "lucide-react";
 export default function BrowseFreelancers() {
   const [freelancers, setFreelancers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchFr = async () => {
       try {
         const res = await api.get('/api/users/freelancers');
-        setFreelancers(res.data);
+        const payload = res.data?.data || res.data || [];
+        const freelancerList = Array.isArray(payload) ? payload : payload.freelancers;
+        setFreelancers(Array.isArray(freelancerList) ? freelancerList : []);
       } catch (e) {
         console.error(e);
+        setFreelancers([]);
+        setError("Freelancers could not be loaded right now. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -44,6 +49,10 @@ export default function BrowseFreelancers() {
             <div className="absolute w-full h-full rounded-full border-2 border-t-[#e10032] dark:border-t-[#ff4d6d] animate-spin" />
           </div>
           <p className="mt-4 text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Loading freelancers...</p>
+        </div>
+      ) : error ? (
+        <div className="py-20 text-center text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-950/20 border border-dashed rounded-3xl border-red-200 dark:border-red-900 font-medium max-w-xl mx-auto">
+          {error}
         </div>
       ) : freelancers.length === 0 ? (
         <div className="py-20 text-center text-slate-500 dark:text-neutral-400 bg-slate-50/50 dark:bg-[#0b101d]/20 border border-dashed rounded-3xl border-slate-200 dark:border-slate-800 font-medium max-w-xl mx-auto">

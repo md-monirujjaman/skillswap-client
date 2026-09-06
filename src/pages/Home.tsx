@@ -58,18 +58,26 @@ export default function Home() {
 
   useEffect(() => {
     const loadHome = async () => {
+      let payload: any = {};
+      let latestTasks: any[] = [];
+      let topFreelancers: any[] = [];
+
       try {
         const res = await api.get("/api/home");
-        const payload = res.data?.data || res.data || {};
-        let latestTasks = Array.isArray(payload.latestTasks)
+        payload = res.data?.data || res.data || {};
+        latestTasks = Array.isArray(payload.latestTasks)
           ? payload.latestTasks
           : Array.isArray(payload.tasks)
             ? payload.tasks
             : [];
+        topFreelancers = Array.isArray(payload.topFreelancers) ? payload.topFreelancers : [];
+      } catch (err) {
+        console.warn("Home aggregate fetch notice:", err);
+      }
 
-        // Keep the featured section useful when the home aggregate is unavailable
-        // or an older backend returns tasks under a different key.
-        if (latestTasks.length === 0) {
+      // Keep Featured Tasks available even when the optional home aggregate fails.
+      if (latestTasks.length === 0) {
+        try {
           const tasksRes = await api.get("/api/tasks", { params: { page: 1, limit: 4 } });
           const tasksPayload = tasksRes.data?.data || tasksRes.data || {};
           latestTasks = Array.isArray(tasksPayload.tasks)
@@ -77,19 +85,31 @@ export default function Home() {
             : Array.isArray(tasksPayload)
               ? tasksPayload
               : [];
+        } catch (err) {
+          console.warn("Featured tasks fetch notice:", err);
         }
-
-        setData({
-          latestTasks,
-          topFreelancers: Array.isArray(payload.topFreelancers) ? payload.topFreelancers : [],
-          stats: payload.stats || null,
-        });
-      } catch (err) {
-        console.warn("Home data fetch notice:", err);
-        setData({ latestTasks: [], topFreelancers: [], stats: null });
-      } finally {
-        setLoading(false);
       }
+
+      if (topFreelancers.length === 0) {
+        try {
+          const freelancersRes = await api.get("/api/users/freelancers");
+          const freelancersPayload = freelancersRes.data?.data || freelancersRes.data || [];
+          topFreelancers = Array.isArray(freelancersPayload)
+            ? freelancersPayload.slice(0, 4)
+            : Array.isArray(freelancersPayload.freelancers)
+              ? freelancersPayload.freelancers.slice(0, 4)
+              : [];
+        } catch (err) {
+          console.warn("Featured freelancers fetch notice:", err);
+        }
+      }
+
+      setData({
+        latestTasks,
+        topFreelancers,
+        stats: payload.stats || null,
+      });
+      setLoading(false);
     };
 
     loadHome();
@@ -283,9 +303,8 @@ export default function Home() {
 
       {/* Dynamic Section 1 — Latest Featured Tasks */}
       <motion.section 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
+        initial={false}
+        animate="visible"
         variants={containerVariants}
         className="py-12 mb-16"
       >
@@ -341,9 +360,8 @@ export default function Home() {
 
       {/* Dynamic Section 2 — Top Freelancers */}
       <motion.section 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
+        initial={false}
+        animate="visible"
         variants={containerVariants}
         className="py-20 md:py-28 mb-16 relative rounded-[2.5rem] p-8 md:p-14 overflow-hidden border border-slate-200/60 dark:border-slate-800/60 shadow-[0_12px_40px_rgba(0,0,0,0.02)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
       >
@@ -385,12 +403,17 @@ export default function Home() {
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-[#e10032] to-amber-400 opacity-80" />
                   
                   <div className="relative mx-auto mb-6">
-                    <img 
-                      src={user.image}
-                      alt={user.name} 
-                      className="w-24 h-24 rounded-full object-cover border-4 border-slate-100 dark:border-[#0f172a] shadow-md relative z-10"
-                    />
-                    {!user.image && <div className="absolute inset-0 z-10 flex items-center justify-center rounded-full border-4 border-slate-100 bg-slate-100 text-2xl font-black text-slate-500 dark:border-[#0f172a] dark:bg-slate-800 dark:text-slate-300">{user.name?.slice(0, 1).toUpperCase()}</div>}
+                    {user.image ? (
+                      <img
+                        src={user.image}
+                        alt={user.name}
+                        className="w-24 h-24 rounded-full object-cover border-4 border-slate-100 dark:border-[#0f172a] shadow-md relative z-10"
+                      />
+                    ) : (
+                      <div className="flex w-24 h-24 items-center justify-center rounded-full border-4 border-slate-100 bg-slate-100 text-2xl font-black text-slate-500 dark:border-[#0f172a] dark:bg-slate-800 dark:text-slate-300">
+                        {user.name?.slice(0, 1).toUpperCase()}
+                      </div>
+                    )}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#e10032] to-pink-500 blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300 scale-110 -z-10"></div>
                   </div>
 

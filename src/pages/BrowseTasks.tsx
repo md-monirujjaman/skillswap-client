@@ -14,6 +14,7 @@ export default function BrowseTasks() {
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState(searchParams.get("category") || "");
+  const [error, setError] = useState("");
 
   // Update category when URL query param changes
   useEffect(() => {
@@ -32,14 +33,20 @@ export default function BrowseTasks() {
 
   const fetchTasks = async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await api.get("/api/tasks", {
         params: { page, limit: 9, search, category },
       });
-      setTasks(Array.isArray(res.data.tasks) ? res.data.tasks : []);
-      setTotalPages(Math.max(1, Number(res.data.pages) || 1));
+      const payload = res.data?.data || res.data || {};
+      const taskList = Array.isArray(payload) ? payload : payload.tasks;
+      setTasks(Array.isArray(taskList) ? taskList : []);
+      setTotalPages(Math.max(1, Number(payload.pages) || 1));
     } catch (error) {
       console.error("Failed to fetch tasks", error);
+      setTasks([]);
+      setTotalPages(1);
+      setError("Tasks could not be loaded right now. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -103,6 +110,10 @@ export default function BrowseTasks() {
             <div className="absolute w-full h-full rounded-full border-2 border-t-[#e10032] dark:border-t-[#ff4d6d] animate-spin" />
           </div>
           <p className="mt-4 text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Loading tasks...</p>
+        </div>
+      ) : error ? (
+        <div className="py-20 text-center text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-950/20 border border-dashed rounded-3xl border-red-200 dark:border-red-900 font-medium max-w-xl mx-auto">
+          {error}
         </div>
       ) : tasks.length === 0 ? (
         <div className="py-20 text-center text-slate-500 dark:text-neutral-400 bg-slate-50/50 dark:bg-[#0b101d]/20 border border-dashed rounded-3xl border-slate-200 dark:border-slate-800 font-medium max-w-xl mx-auto">

@@ -10,7 +10,11 @@ export default function ClientProposals() {
 
   useEffect(() => {
     api.get("/api/tasks/manage")
-      .then((res) => setTasks(Array.isArray(res.data) ? res.data : []))
+      .then((res) => {
+        const payload = res.data?.data || res.data || [];
+        const taskList = Array.isArray(payload) ? payload : payload.tasks;
+        setTasks(Array.isArray(taskList) ? taskList : []);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);

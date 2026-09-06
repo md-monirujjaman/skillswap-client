@@ -13,9 +13,12 @@ export default function ManageProposals() {
     const fetchProps = async () => {
       try {
         const res = await api.get(`/api/proposals/task/${taskId}`);
-        setProposals(res.data);
+        const payload = res.data?.data || res.data || [];
+        const proposalList = Array.isArray(payload) ? payload : payload.proposals;
+        setProposals(Array.isArray(proposalList) ? proposalList : []);
       } catch (e) {
         console.error(e);
+        setProposals([]);
       } finally {
         setLoading(false);
       }

@@ -18,7 +18,10 @@ export function ProtectedRoute({ children, allowedRoles }: { children: React.Rea
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
+  const normalizedRole = String(user.role).toLowerCase();
+  const allowedRole = allowedRoles.some((role) => role.toLowerCase() === normalizedRole);
+
+  if (!allowedRole) {
     const dashboardByRole: Record<string, string> = {
       Admin: "/dashboard/admin",
       Freelancer: "/dashboard/freelancer",

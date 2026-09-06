@@ -34,9 +34,22 @@ import api from "@/lib/api";
 
 function ClientOverview() {
   const [stats, setStats] = useState({ totalTasks: 0, openTasks: 0, inProgressTasks: 0, totalSpent: 0 });
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/api/dashboard/client").then(res => setStats(res.data.stats)).catch(console.error);
+    api.get("/api/dashboard/client").then(res => {
+      const payload = res.data?.data || res.data || {};
+      const nextStats = payload.stats || payload;
+      setStats({
+        totalTasks: Number(nextStats.totalTasks) || 0,
+        openTasks: Number(nextStats.openTasks) || 0,
+        inProgressTasks: Number(nextStats.inProgressTasks) || 0,
+        totalSpent: Number(nextStats.totalSpent) || 0,
+      });
+    }).catch((requestError) => {
+      console.error(requestError);
+      setError("Dashboard statistics could not be loaded right now.");
+    });
   }, []);
 
   return (
@@ -45,6 +58,7 @@ function ClientOverview() {
         <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">Client Overview</h2>
         <p className="text-slate-500 dark:text-neutral-400 mt-1.5 font-medium text-sm">Monitor your tasks, spending, and project activities.</p>
       </div>
+      {error && <p className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400">{error}</p>}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-6 bg-white dark:bg-[#0b101d]/60 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 text-center relative overflow-hidden group hover:border-[#e10032]/30 transition-colors">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-[#e10032]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

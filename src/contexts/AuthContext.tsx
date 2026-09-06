@@ -13,11 +13,21 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const USER_STORAGE_KEY = "skillswap_user";
 
+export function normalizeUser(user: User | null | undefined): User | null {
+  if (!user) return null;
+
+  const role = String(user.role || "Client").toLowerCase();
+  return {
+    ...user,
+    role: role === "admin" ? "Admin" : role === "freelancer" ? "Freelancer" : "Client",
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem(USER_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : null;
+      return saved ? normalizeUser(JSON.parse(saved)) : null;
     } catch {
       return null;
     }
@@ -27,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = useCallback(async (): Promise<User | null> => {
     try {
       const res = await api.get("/api/auth/me");
-      const currentUser = res.data?.user || null;
+      const currentUser = normalizeUser(res.data?.user || res.data?.data?.user || null);
       setUser(currentUser);
       if (currentUser) {
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
