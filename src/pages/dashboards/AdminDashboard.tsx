@@ -8,7 +8,8 @@ export default function AdminDashboard() {
     { path: "/dashboard/admin", label: "Overview" },
     { path: "/dashboard/admin/users", label: "Manage Users" },
     { path: "/dashboard/admin/tasks", label: "Manage Tasks" },
-    { path: "/dashboard/admin/transactions", label: "Transactions" }
+    { path: "/dashboard/admin/transactions", label: "Transactions" },
+    { path: "/dashboard/admin/payments", label: "Payment Overview" }
   ];
 
   return (
@@ -18,6 +19,7 @@ export default function AdminDashboard() {
         <Route path="/users" element={<ManageUsers />} />
         <Route path="/tasks" element={<ManageTasks />} />
         <Route path="/transactions" element={<Transactions />} />
+        <Route path="/payments" element={<Transactions />} />
       </Routes>
     </DashboardLayout>
   );
@@ -78,6 +80,40 @@ function AdminOverview() {
           <div className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 relative z-10">Total Revenue</div>
           <div className="text-4xl font-black text-white dark:text-slate-900 relative z-10">${stats.totalRevenue.toLocaleString()}</div>
         </div>
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <section className="rounded-3xl border border-slate-200/60 bg-white p-6 dark:border-slate-800/60 dark:bg-[#0b101d]/60">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">Platform Activity</h3>
+              <p className="mt-1 text-xs font-medium text-slate-500 dark:text-neutral-400">Current task volume at a glance.</p>
+            </div>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#e10032] dark:text-[#ff4d6d]">Live totals</span>
+          </div>
+          <div className="space-y-5">
+            {[
+              { label: "All tasks", value: stats.totalTasks, color: "bg-slate-900 dark:bg-slate-200" },
+              { label: "Active tasks", value: stats.activeTasks, color: "bg-[#e10032]" },
+              { label: "Registered users", value: stats.totalUsers, color: "bg-emerald-500" }
+            ].map((item) => {
+              const maximum = Math.max(stats.totalTasks, stats.activeTasks, stats.totalUsers, 1);
+              return (
+                <div key={item.label}>
+                  <div className="mb-2 flex items-center justify-between text-xs font-bold text-slate-600 dark:text-neutral-300"><span>{item.label}</span><span>{item.value}</span></div>
+                  <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"><div className={`h-full rounded-full ${item.color}`} style={{ width: `${Math.max((item.value / maximum) * 100, item.value ? 4 : 0)}%` }} /></div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-200/60 bg-white p-6 dark:border-slate-800/60 dark:bg-[#0b101d]/60">
+          <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">Revenue Snapshot</h3>
+          <p className="mt-1 text-xs font-medium text-slate-500 dark:text-neutral-400">Total processed platform revenue.</p>
+          <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black tracking-tight text-slate-900 dark:text-white">${stats.totalRevenue.toLocaleString()}</span><span className="mb-2 rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400">Processed</span></div>
+          <div className="mt-8 flex h-20 items-end gap-2 rounded-2xl bg-[linear-gradient(135deg,rgba(225,0,50,0.12),rgba(16,185,129,0.12))] p-3">{[30, 48, 38, 66, 54, 78, 100].map((height, index) => <div key={index} className="flex-1 rounded-t-md bg-[#e10032]/70 dark:bg-[#ff4d6d]/75" style={{ height: `${height}%` }} />)}</div>
+        </section>
       </div>
     </div>
   );

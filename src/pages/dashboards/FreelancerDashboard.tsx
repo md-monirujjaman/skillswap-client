@@ -104,6 +104,19 @@ function FreelancerOverview() {
           </div>
         </div>
       )}
+
+      {earnings.length > 0 && (
+        <div className="mt-8 rounded-3xl border border-slate-200/60 bg-white p-6 dark:border-slate-800/60 dark:bg-[#0b101d]/60">
+          <div className="mb-6 flex items-center justify-between"><div><h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Earnings Overview</h2><p className="mt-1 text-xs font-medium text-slate-500 dark:text-neutral-400">Your latest completed projects.</p></div><span className="text-xs font-bold uppercase tracking-wider text-[#e10032] dark:text-[#ff4d6d]">${stats.totalEarnings}</span></div>
+          <div className="flex h-36 items-end gap-3">
+            {earnings.slice(-8).map((payment: any, index: number) => {
+              const amount = Number(payment.amount) || 0;
+              const maximum = Math.max(...earnings.slice(-8).map((item: any) => Number(item.amount) || 0), 1);
+              return <div key={payment._id || index} className="group flex min-w-0 flex-1 flex-col items-center justify-end gap-2"><span className="text-[10px] font-bold text-slate-500 opacity-0 transition-opacity group-hover:opacity-100 dark:text-neutral-400">${amount}</span><div className="w-full rounded-t-lg bg-gradient-to-t from-[#e10032] to-[#ff4d6d] transition-opacity group-hover:opacity-80" style={{ height: `${Math.max((amount / maximum) * 100, 8)}%` }} /><span className="max-w-full truncate text-[10px] font-bold text-slate-400 dark:text-neutral-500">{new Date(payment.createdAt).toLocaleDateString(undefined, { month: "short" })}</span></div>;
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
