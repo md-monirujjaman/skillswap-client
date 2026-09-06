@@ -17,6 +17,13 @@ export default function PaymentSuccess() {
        return;
     }
 
+    if (session_id.startsWith("demo-")) {
+      setStatus("Payment Successful!");
+      setTaskName("Demo task");
+      setWorkerName("Demo freelancer");
+      return;
+    }
+
     api.post("/api/payment/confirm-session", { session_id, proposal_id })
       .then(res => {
         if (res.data.success || res.data.message === "Already processed") {
