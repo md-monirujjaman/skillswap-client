@@ -2,9 +2,11 @@ import axios from 'axios';
 
 const isBrowser = typeof window !== 'undefined';
 
-// Keep browser requests same-origin so OAuth state/session cookies are first-party.
-// Vite and Vercel proxy /api to the backend in development and production.
-export const API_BASE_URL = isBrowser
+const isLocalhost = isBrowser && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+// Keep production auth requests on the backend origin so its OAuth state and
+// session cookies are sent back to the backend callback and /api/auth/me.
+export const API_BASE_URL = isLocalhost
   ? ''
   : (import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || 'https://skillswap-server-monirujjaman.vercel.app');
 
