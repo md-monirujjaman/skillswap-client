@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Link } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 
 // Sub-pages (We will stub these first, and add data fetching)
@@ -37,6 +37,7 @@ import api from "@/lib/api";
 
 function ClientOverview() {
   const [stats, setStats] = useState({ totalTasks: 0, openTasks: 0, inProgressTasks: 0, totalSpent: 0 });
+  const [tasks, setTasks] = useState<any[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -53,6 +54,11 @@ function ClientOverview() {
       console.error(requestError);
       setError("Dashboard statistics could not be loaded right now.");
     });
+    api.get("/api/tasks/manage").then(res => {
+      const payload = res.data?.data || res.data || [];
+      const taskList = Array.isArray(payload) ? payload : payload.tasks;
+      setTasks(Array.isArray(taskList) ? taskList.slice(0, 4) : []);
+    }).catch(() => setTasks([]));
   }, []);
 
   return (
@@ -84,6 +90,26 @@ function ClientOverview() {
           <div className="text-4xl font-black tracking-tight">${stats.totalSpent}</div>
         </div>
       </div>
+      <div className="mt-10 flex items-center justify-between gap-4">
+        <h3 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">Recent Tasks</h3>
+        <Link to="/dashboard/client/post" className="rounded-xl bg-[#e10032] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#c7002a]">Post a New Task</Link>
+      </div>
+      {tasks.length === 0 ? (
+        <div className="mt-4 rounded-3xl border border-dashed border-slate-200 bg-slate-50/50 py-16 text-center dark:border-slate-800 dark:bg-[#0b101d]/20">
+          <p className="font-bold text-slate-800 dark:text-white">No tasks yet</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-neutral-400">Create a task to start receiving proposals.</p>
+          <Link to="/dashboard/client/post" className="mt-5 inline-flex rounded-xl bg-[#e10032] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#c7002a]">Post a Task</Link>
+        </div>
+      ) : (
+        <div className="mt-4 space-y-3">
+          {tasks.map((task) => (
+            <Link key={task._id} to={`/tasks/${task._id}`} className="flex items-center justify-between rounded-2xl border border-slate-200/60 bg-white p-5 transition hover:border-[#e10032]/30 dark:border-slate-800/60 dark:bg-[#0b101d]/60">
+              <div><p className="font-extrabold text-slate-900 dark:text-white">{task.title}</p><p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500">{task.category || "General"} · {task.status}</p></div>
+              <span className="font-black text-[#e10032] dark:text-[#ff4d6d]">${task.budget}</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

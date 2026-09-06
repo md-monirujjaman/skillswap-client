@@ -34,10 +34,12 @@ export default function FreelancerDashboard() {
 function FreelancerOverview() {
   const [stats, setStats] = useState({ totalProposals: 0, pendingProposals: 0, acceptedProposals: 0, totalEarnings: 0 });
   const [earnings, setEarnings] = useState<any[]>([]);
+  const [recentProposals, setRecentProposals] = useState<any[]>([]);
 
   useEffect(() => {
     api.get("/api/dashboard/freelancer").then(res => setStats(res.data.stats)).catch(console.error);
     api.get("/api/dashboard/freelancer/earnings").then(res => setEarnings(res.data.earnings)).catch(console.error);
+    api.get("/api/proposals/mine?freelancerEmail=mine").then(res => setRecentProposals(Array.isArray(res.data) ? res.data.slice(0, 4) : [])).catch(() => setRecentProposals([]));
   }, []);
 
   return (
@@ -69,6 +71,18 @@ function FreelancerOverview() {
           <div className="text-4xl font-black tracking-tight">${stats.totalEarnings}</div>
         </div>
       </div>
+
+      <div className="mb-6 mt-10 flex items-center justify-between">
+        <h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Recent Proposals</h2>
+        <a href="/dashboard/freelancer/proposals" className="text-xs font-bold uppercase tracking-wider text-[#e10032] hover:text-[#c7002a] dark:text-[#ff4d6d]">View all</a>
+      </div>
+      {recentProposals.length === 0 ? (
+        <div className="mb-10 rounded-3xl border border-dashed border-slate-200 bg-slate-50/50 py-14 text-center text-sm font-medium text-slate-500 dark:border-slate-800 dark:bg-[#0b101d]/20 dark:text-neutral-400">No proposals yet. Browse tasks to find your next project.</div>
+      ) : (
+        <div className="mb-10 space-y-3">
+          {recentProposals.map((proposal) => <div key={proposal._id} className="flex items-center justify-between rounded-2xl border border-slate-200/60 bg-white p-5 dark:border-slate-800/60 dark:bg-[#0b101d]/60"><div><p className="font-extrabold text-slate-900 dark:text-white">{proposal.task_id?.title || "Task proposal"}</p><p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500">Bid ${proposal.proposed_budget}</p></div><span className="rounded-lg bg-red-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#e10032] dark:bg-red-950/20 dark:text-[#ff4d6d]">{proposal.status}</span></div>)}
+        </div>
+      )}
 
       <div className="mb-6">
         <h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Earnings History</h2>
